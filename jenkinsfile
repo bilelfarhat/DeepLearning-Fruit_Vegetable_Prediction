@@ -42,13 +42,15 @@ pipeline {
         }
 
         stage('Update Kubernetes deployment') {
-            steps {
-                sh '''
-                    gcloud container clusters get-credentials cluster-1 --zone us-central1 --project deeplearning-422418
-                    kubectl apply -f kubernetes/
-                    kubectl set image deployment/deep deep=bilelfarhat/deep2:latest
-                '''
-            }
+    steps {
+        sh '''
+            gcloud container clusters get-credentials cluster-1 --zone us-central1 --project deeplearning-422418
+            kubectl apply -f kubernetes/
+            kubectl set image deployment/deep deep=bilelfarhat/deep2:latest
+        '''
+    }
+}
+
         }
     }
 
