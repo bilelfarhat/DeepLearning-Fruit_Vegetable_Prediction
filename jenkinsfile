@@ -46,7 +46,7 @@ pipeline {
                 sh '''
                     gcloud container clusters get-credentials cluster-1 --zone us-central1 --project deeplearning-422418
                     kubectl apply -f kubernetes/
-                    kubectl set image deployment/deep deep=$DOCKER_IMAGE_NAME:latest
+                    kubectl set image deployment/deep deep=bilelfarhat/deep2:latest
                 '''
             }
         }
