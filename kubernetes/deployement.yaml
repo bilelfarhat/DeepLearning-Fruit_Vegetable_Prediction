@@ -3,10 +3,15 @@ kind: Deployment
 metadata:
   name: deep
 spec:
-  replicas: 1
+  replicas: 1  # Nombre de répliques souhaitées pour le déploiement
   selector:
     matchLabels:
       app: deep
+  strategy:
+    type: RollingUpdate  # Type de stratégie de mise à jour
+    rollingUpdate:
+      maxUnavailable: 1  # Nombre maximum de pods non disponibles pendant la mise à jour
+      maxSurge: 1  # Nombre maximal de pods supplémentaires pouvant être créés pendant la mise à jour
   template:
     metadata:
       labels:
@@ -14,7 +19,6 @@ spec:
     spec:
       containers:
         - name: deep
-          image: bilelfarhat/deep1:latest  # Remplacez ceci par l'image Docker appropriée
+          image: bilelfarhat/deep1:latest  # Image Docker utilisée pour le conteneur
           ports:
             - containerPort: 5000  # Port sur lequel l'application écoute à l'intérieur du conteneur
-         

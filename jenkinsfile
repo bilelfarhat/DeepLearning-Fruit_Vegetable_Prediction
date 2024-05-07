@@ -15,11 +15,6 @@ pipeline {
             }
         }
         
-        stage('Download model file from Google Cloud Storage') {
-            steps {
-                sh 'gsutil cp gs://model_deep/plant_disease_prediction_model.h5 .'
-            }
-        }
 
         stage('Login to Docker Hub') {
             steps {
@@ -51,8 +46,8 @@ pipeline {
             steps {
                 sh '''
                     gcloud container clusters get-credentials $CLUSTER_NAME --zone $ZONE --project $PROJECT_ID
-                    kubectl apply -f k8s/
-                    kubectl set image deployment/flask-app-deployment flask-app=$DOCKER_IMAGE_NAME:latest
+                    kubectl apply -f kubernetes/
+                    kubectl set image deployment/deep deep=$DOCKER_IMAGE_NAME:latest
                 '''
             }
         }
