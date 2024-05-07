@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deep
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: deep
+  template:
+    metadata:
+      labels:
+        app: deep
+    spec:
+      containers:
+        - name: deep
+          image: bilelfarhat/deep1:latest  # Remplacez ceci par l'image Docker appropriée
+          ports:
+            - containerPort: 5000  # Port sur lequel l'application écoute à l'intérieur du conteneur
+         

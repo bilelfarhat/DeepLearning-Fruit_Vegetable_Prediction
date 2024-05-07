@@ -1,0 +1,67 @@
+pipeline {
+    agent any
+
+    environment {
+        PROJECT_ID = 'deeplearning-422418'
+        CLUSTER_NAME = 'cluster-1'
+        ZONE = 'us-central1'
+        DOCKER_IMAGE_NAME = 'bilelfarhat/deep2'
+    }
+
+    stages {
+        stage('Checkout repository') {
+            steps {
+                git branch: 'main', url: 'https://github.com/bilelfarhat/DeepLearning-Fruit_Vegetable_Prediction.git'
+            }
+        }
+        
+        stage('Download model file from Google Cloud Storage') {
+            steps {
+                sh 'gsutil cp gs://model_deep/plant_disease_prediction_model.h5 .'
+            }
+        }
+
+        stage('Login to Docker Hub') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                    sh 'docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD'
+                }
+            }
+        }
+
+        stage('Build Docker image') {
+            steps {
+                sh "docker build -t $DOCKER_IMAGE_NAME ."
+            }
+        }
+
+        stage('Tag Docker image') {
+            steps {
+                sh "docker tag $DOCKER_IMAGE_NAME $DOCKER_IMAGE_NAME:latest"
+            }
+        }
+
+        stage('Push Docker image to Docker Hub') {
+            steps {
+                sh "docker push $DOCKER_IMAGE_NAME:latest"
+            }
+        }
+
+        stage('Update Kubernetes deployment') {
+            steps {
+                sh '''
+                    gcloud container clusters get-credentials $CLUSTER_NAME --zone $ZONE --project $PROJECT_ID
+                    kubectl apply -f k8s/
+                    kubectl set image deployment/flask-app-deployment flask-app=$DOCKER_IMAGE_NAME:latest
+                '''
+            }
+        }
+    }
+
+    post {
+        success {
+            // Supprime l'image Docker de l'instance VM
+            sh "docker rmi $DOCKER_IMAGE_NAME:latest"
+        }
+    }
+}
