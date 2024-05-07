@@ -17,19 +17,19 @@ pipeline {
         
         stage('Build Docker image') {
             steps {
-                sh "docker build -t $DOCKER_IMAGE_NAME ."
+                sh "docker build -t bilelfarhat/deep2 ."
             }
         }
 
         stage('Tag Docker image') {
             steps {
-                sh "docker tag $DOCKER_IMAGE_NAME $DOCKER_IMAGE_NAME:latest"
+                sh "docker tag bilelfarhat/deep2 bilelfarhat/deep2:latest"
             }
         }
 
         stage('Push Docker image to Docker Hub') {
             steps {
-                sh "docker push $DOCKER_IMAGE_NAME:latest"
+                sh "docker push bilelfarhat/deep2:latest"
             }
         }
 
@@ -47,7 +47,7 @@ pipeline {
     post {
         success {
             // Remove Docker image from Jenkins workspace
-            sh "docker rmi $DOCKER_IMAGE_NAME:latest"
+            sh "docker rmi bilelfarhat/deep2:latest"
         }
     }
 }
