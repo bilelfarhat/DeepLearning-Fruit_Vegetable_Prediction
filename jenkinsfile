@@ -44,7 +44,7 @@ pipeline {
         stage('Update Kubernetes deployment') {
             steps {
                 sh '''
-                    gcloud container clusters get-credentials $CLUSTER_NAME --zone $ZONE --project $PROJECT_ID
+                    
                     kubectl apply -f kubernetes/
                     kubectl set image deployment/deep deep=$DOCKER_IMAGE_NAME:latest
                 '''
