@@ -29,7 +29,7 @@ pipeline {
 
         stage('Push Docker image to Docker Hub') {
             steps {
-                sh "docker push bilelfarhat/deep2:latest"
+                sh "docker push bilelfarhat/deep2"
             }
         }
 
